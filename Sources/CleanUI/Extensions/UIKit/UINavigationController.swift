@@ -24,7 +24,7 @@ extension UINavigationController: UIViewControllerTransitioningDelegate, UINavig
     override open func viewDidLoad() {
         super.viewDidLoad()
         
-        delegate = self
+        // delegate = self
         transitioningDelegate = self
         interactivePopGestureRecognizer?.delegate = self
         
