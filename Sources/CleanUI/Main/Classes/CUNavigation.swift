@@ -53,6 +53,17 @@ public class CUNavigation {
             }
         }
     }
+
+    /// Trys to pop all view controllers except the currently visible one
+    public static func clearBackStack() {
+    if let viewController = getCurrentNavigationController() {
+        // pop on reverse order as the list shrinks one item in each iteration
+        for index in (0..<viewController.children.count - 1).reversed() {
+            viewController.children[index].removeFromParent()
+        }
+    }
+}
+
     
     /// Trys to find the current active UINavigationController.
     /// - Returns: An optional UINavigationController
@@ -101,7 +112,8 @@ public class CUNavigation {
     public static func pushToSwiftUiView<Content: View>(
         _ view: Content, animated: Bool = true, 
         enableBackNavigation: Bool = true, 
-        popIntermediate: Bool = false
+        popIntermediate: Bool = false,
+        clearBackStack: Bool = false
     ) {
         if let navigationController = self.getCurrentNavigationController() {
             let viewController = UIHostingController(rootView: view)
@@ -111,6 +123,8 @@ public class CUNavigation {
             
             if(popIntermediate) {
                 popIntermediateViews()
+            } else if(clearBackStack) {
+                clearBackStack()
             }
         }
     }
