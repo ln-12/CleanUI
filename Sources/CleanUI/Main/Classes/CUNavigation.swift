@@ -56,13 +56,13 @@ public class CUNavigation {
 
     /// Trys to pop all view controllers except the currently visible one
     public static func clearBackStack() {
-    if let viewController = getCurrentNavigationController() {
-        // pop on reverse order as the list shrinks one item in each iteration
-        for index in (0..<viewController.children.count - 1).reversed() {
-            viewController.children[index].removeFromParent()
+        if let viewController = getCurrentNavigationController() {
+            // pop on reverse order as the list shrinks one item in each iteration
+            for index in (0..<viewController.children.count - 1).reversed() {
+                viewController.children[index].removeFromParent()
+            }
         }
     }
-}
 
     
     /// Trys to find the current active UINavigationController.
@@ -105,15 +105,20 @@ public class CUNavigation {
         return nil
     }
     
+    public enum ViewStackBehaviour {
+        case keep
+        case clearExceptRoot
+        case clearAll
+    }
+    
     /// Try's to push to a SwiftUI View inside the current UINavigationController
     /// - Parameter animated: Push using a animation, default `true`
     /// - Parameter enableBackNavigation: Enable or disbale back swipe gesture, default `true`
-    /// - Parameter popIntermediate: Enable or disable if all intermediate views should be popped after pushing the new view
+    /// - Parameter stackBehaviour: Controls if all intermediate views, all views or no views on the stack should be popped after pushing the new view
     public static func pushToSwiftUiView<Content: View>(
-        _ view: Content, animated: Bool = true, 
-        enableBackNavigation: Bool = true, 
-        popIntermediate: Bool = false,
-        clearBackStack: Bool = false
+        _ view: Content, animated: Bool = true,
+        enableBackNavigation: Bool = true,
+        stackBehaviour: ViewStackBehaviour = .keep
     ) {
         if let navigationController = self.getCurrentNavigationController() {
             let viewController = UIHostingController(rootView: view)
@@ -121,10 +126,10 @@ public class CUNavigation {
             navigationController.pushViewController(viewController, animated: animated)
             navigationController.interactivePopGestureRecognizer?.isEnabled = enableBackNavigation
             
-            if(popIntermediate) {
-                popIntermediateViews()
-            } else if(clearBackStack) {
-                clearBackStack()
+            switch(stackBehaviour) {
+                case .clearExceptRoot: popIntermediateViews()
+                case .clearAll: clearBackStack()
+                default: break
             }
         }
     }
