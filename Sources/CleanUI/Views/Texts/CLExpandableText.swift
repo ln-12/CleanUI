@@ -74,7 +74,8 @@ public struct CLExpandableText: View {
                         .frame(maxWidth: .infinity, alignment: .topLeading)
                 }
             }else {
-                Text(expanded || string.count < characterLimit ? string : String(string.trim().prefix(characterLimit) + String(string.count > characterLimit ? "..." : "")))
+                let shortText = string.trim().prefix(characterLimit) + String(string.count > characterLimit ? "..." : "")
+                Text(expanded || string.count < characterLimit ? string : String(shortText))
                     .foregroundColor(foregroundColor)
                     .multilineTextAlignment(.leading)
                     .fixedSize(horizontal: false, vertical: true)
@@ -98,7 +99,6 @@ public struct CLExpandableText: View {
                 .buttonStyle(.plain)
                 .padding(.vertical, 5)
             }
-            
         }
         .onChange(of: string){ value in
             shortString = String(value.trim().prefix(characterLimit) + String(value.count > self.characterLimit ? "..." : ""))
